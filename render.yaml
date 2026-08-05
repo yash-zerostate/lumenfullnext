@@ -1,0 +1,33 @@
+# Render blueprint for Lumen.
+#
+# Vercel is the more natural home for this app (see DEPLOYMENT.md), but it runs
+# perfectly well on Render as a normal Node process — which is also the setup
+# you want if you dislike serverless: one long-lived instance means one MongoDB
+# pool and a rate limiter whose counters are actually shared.
+#
+# The app is at the repo ROOT, so there is no rootDir here.
+services:
+  - type: web
+    name: lumen
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    # `next start` binds to $PORT, which Render provides. Never hard-code a port.
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false # set in the Render dashboard — never commit this
+      - key: MONGODB_DB
+        value: lumen_fullstack
+      - key: AUTH_JWT_SECRET
+        sync: false
+      - key: ACCESS_TOKEN_TTL_MIN
+        value: "15"
+      - key: REFRESH_TOKEN_TTL_DAYS
+        value: "30"
+      # Fallback only: the CSRF origin check prefers the request's own Host
+      # header, so this does not need updating for every preview URL.
+      - key: APP_ORIGIN
+        sync: false # e.g. https://lumen.onrender.com

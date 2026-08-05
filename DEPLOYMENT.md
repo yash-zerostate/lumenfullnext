@@ -41,6 +41,32 @@ auth cookies to `Secure`.
 request's own Host header first, so preview deployments on `*.vercel.app` keep
 working without extra configuration.
 
+## Render setup (if you deploy here instead)
+
+Create a **Web Service** — not a Static Site. This app needs a running server
+for its API routes, middleware and server rendering; there is no `out/` folder
+to serve.
+
+| Setting | Value |
+|---|---|
+| Root Directory | *(leave blank — the app is at the repo root)* |
+| Build command | `npm ci && npm run build` |
+| Start command | `npm start` |
+| Runtime | Node |
+
+Or import `render.yaml` as a Blueprint.
+
+Environment variables are the same as the Vercel list above, plus
+`NODE_ENV=production` (Vercel sets that for you, Render does not — and without
+it the auth cookies are not marked `Secure`).
+
+Do **not** set `PORT`. Render provides it and `next start` binds to it; that is
+why the start script has no `-p` flag. Locally, `npm run dev` still uses 4001.
+
+Running on one long-lived instance actually fixes two serverless caveats: the
+MongoDB pool is shared across all requests, and the in-memory rate limiter
+counts every request rather than a fraction of them.
+
 ## MongoDB Atlas
 
 Add `0.0.0.0/0` to **Network Access**. Vercel functions do not have stable
