@@ -50,7 +50,7 @@ to serve.
 | Setting | Value |
 |---|---|
 | Root Directory | *(leave blank — the app is at the repo root)* |
-| Build command | `npm ci && npm run build` |
+| Build command | `npm ci --include=dev && npm run build` |
 | Start command | `npm start` |
 | Runtime | Node |
 
@@ -62,6 +62,13 @@ it the auth cookies are not marked `Secure`).
 
 Do **not** set `PORT`. Render provides it and `next start` binds to it; that is
 why the start script has no `-p` flag. Locally, `npm run dev` still uses 4001.
+
+**`--include=dev` in the build command is not optional here.** With
+`NODE_ENV=production` set, npm skips devDependencies — and TypeScript is one, so
+`next build` fails with `Cannot find module 'typescript'` while loading
+`next.config.ts`. The same applies to the Express APIs in the sibling repos,
+whose build runs `tsc`. (Vercel installs devDependencies regardless, which is
+why this only bites on Render.)
 
 Running on one long-lived instance actually fixes two serverless caveats: the
 MongoDB pool is shared across all requests, and the in-memory rate limiter

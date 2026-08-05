@@ -11,7 +11,10 @@ services:
     name: lumen
     runtime: node
     plan: free
-    buildCommand: npm ci && npm run build
+    # --include=dev is required: NODE_ENV=production (below) makes npm skip
+    # devDependencies, and the build needs TypeScript — without it `next build`
+    # dies with "Cannot find module 'typescript'".
+    buildCommand: npm ci --include=dev && npm run build
     # `next start` binds to $PORT, which Render provides. Never hard-code a port.
     startCommand: npm start
     envVars:
