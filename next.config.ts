@@ -6,6 +6,11 @@ const nextConfig: NextConfig = {
   // out of the bundler and let Node require it at runtime.
   serverExternalPackages: ["mongoose", "bcryptjs"],
   poweredByHeader: false,
+  // This app renders no images through next/image, and the optimizer pulls in
+  // sharp/libvips — which is where every remaining advisory in `npm audit`
+  // lives. Turning it off removes the dependency's attack surface entirely
+  // rather than carrying a known-vulnerable path we never call.
+  images: { unoptimized: true },
   async headers() {
     return [
       {
