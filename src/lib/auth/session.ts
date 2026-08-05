@@ -18,13 +18,15 @@ import {
 
 export type IssuedTokens = { accessToken: string; refreshToken: string };
 
+/** The shared user profile — identical field names across all three demo apps. */
 export type SessionUser = {
   id: string;
   name: string;
   email: string;
-  role: "user" | "admin";
+  active: boolean;
   plan: "free" | "pro" | "enterprise";
-  company: string;
+  role: "developer" | "security" | "marketing" | "compliance";
+  riskScore: number;
 };
 
 export function toSessionUser(user: UserDoc): SessionUser {
@@ -32,9 +34,10 @@ export function toSessionUser(user: UserDoc): SessionUser {
     id: String(user._id),
     name: user.name,
     email: user.email,
-    role: user.role as SessionUser["role"],
+    active: user.active !== false,
     plan: user.plan as SessionUser["plan"],
-    company: user.company ?? "",
+    role: user.role as SessionUser["role"],
+    riskScore: user.riskScore,
   };
 }
 
@@ -63,8 +66,10 @@ export async function issueSession(
     sub: String(user._id),
     email: user.email,
     name: user.name,
-    role: user.role as AccessClaims["role"],
+    active: user.active !== false,
     plan: user.plan as AccessClaims["plan"],
+    role: user.role as AccessClaims["role"],
+    riskScore: user.riskScore,
     sid: familyId,
   });
 
@@ -136,8 +141,10 @@ export async function rotateSession(
     sub: String(user._id),
     email: user.email,
     name: user.name,
-    role: user.role as AccessClaims["role"],
+    active: user.active !== false,
     plan: user.plan as AccessClaims["plan"],
+    role: user.role as AccessClaims["role"],
+    riskScore: user.riskScore,
     sid: record.familyId,
   });
 

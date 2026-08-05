@@ -56,11 +56,15 @@ export default async function DashboardPage() {
               {user.name.split(" ")[0]}&rsquo;s workspace
             </h1>
             <p className="mt-1 text-sm text-slate-400">
-              {user.company || "Personal account"} · {projects.length} of {limit} project
-              {limit === 1 ? "" : "s"} used
+              {projects.length} of {limit} project{limit === 1 ? "" : "s"} used
             </p>
           </div>
-          <span className="badge">{user.plan} plan</span>
+          <div className="flex flex-wrap gap-2">
+            <span className="badge">{user.plan} plan</span>
+            <span className="badge">{user.role}</span>
+            <span className="badge">risk {user.riskScore}</span>
+            <span className="badge">{user.active ? "active" : "inactive"}</span>
+          </div>
         </div>
 
         <dl className="mt-8 grid gap-4 sm:grid-cols-3">

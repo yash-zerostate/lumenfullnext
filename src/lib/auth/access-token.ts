@@ -6,13 +6,18 @@ import { env } from "@/lib/env";
  * Deliberately free of `node:crypto` imports: middleware runs on the Edge
  * runtime and only ever needs to *verify*, so this module must stay portable.
  * Anything that needs Node crypto lives in `refresh-token.ts`.
+ *
+ * The claims mirror the shared user profile, so anything reading this token
+ * sees the same attribute names the other two demo apps use.
  */
 export type AccessClaims = {
   sub: string;
   email: string;
   name: string;
-  role: "user" | "admin";
+  active: boolean;
   plan: "free" | "pro" | "enterprise";
+  role: "developer" | "security" | "marketing" | "compliance";
+  riskScore: number;
   /** Session (refresh-token family) id — ties an access token to one login. */
   sid: string;
 };
@@ -47,8 +52,10 @@ export async function verifyAccessToken(token: string): Promise<AccessClaims | n
       sub: payload.sub,
       email: payload.email,
       name: String(payload.name ?? ""),
-      role: (payload.role as AccessClaims["role"]) ?? "user",
+      active: payload.active !== false,
       plan: (payload.plan as AccessClaims["plan"]) ?? "free",
+      role: (payload.role as AccessClaims["role"]) ?? "developer",
+      riskScore: typeof payload.riskScore === "number" ? payload.riskScore : 1,
       sid: String(payload.sid ?? ""),
     };
   } catch {

@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { PLAN_OPTIONS, RISK_SCORE_OPTIONS, ROLE_OPTIONS } from "@/lib/validation";
+
 type Mode = "login" | "signup";
 
 type ApiError = {
@@ -31,10 +33,12 @@ export function AuthForm({ mode, next }: { mode: Mode; next: string }) {
         body: JSON.stringify(data),
       });
 
+      const payload = await response.json().catch(() => ({}));
+
       if (!response.ok) {
-        const payload = (await response.json().catch(() => ({}))) as ApiError;
-        setFields(payload.error?.fields ?? {});
-        setFormError(payload.error?.message ?? "Something went wrong. Please try again.");
+        const error = payload as ApiError;
+        setFields(error.error?.fields ?? {});
+        setFormError(error.error?.message ?? "Something went wrong. Please try again.");
         return;
       }
 
@@ -55,24 +59,6 @@ export function AuthForm({ mode, next }: { mode: Mode; next: string }) {
         <p className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
           {formError}
         </p>
-      )}
-
-      {mode === "signup" && (
-        <>
-          <div>
-            <label className="label" htmlFor="name">
-              Full name
-            </label>
-            <input id="name" name="name" className="input" autoComplete="name" required />
-            {fields.name && <p className="field-error">{fields.name}</p>}
-          </div>
-          <div>
-            <label className="label" htmlFor="company">
-              Company <span className="normal-case text-slate-600">(optional)</span>
-            </label>
-            <input id="company" name="company" className="input" autoComplete="organization" />
-          </div>
-        </>
       )}
 
       <div>
@@ -103,12 +89,88 @@ export function AuthForm({ mode, next }: { mode: Mode; next: string }) {
           required
         />
         {fields.password && <p className="field-error">{fields.password}</p>}
-        {mode === "signup" && !fields.password && (
-          <p className="mt-1 text-xs text-slate-500">
-            At least 10 characters, with an uppercase letter and a number.
-          </p>
-        )}
       </div>
+
+      {mode === "signup" && (
+        <>
+          <div>
+            <label className="label" htmlFor="name">
+              Full name <span className="normal-case text-slate-600">(optional)</span>
+            </label>
+            <input id="name" name="name" className="input" autoComplete="name" />
+            {fields.name && <p className="field-error">{fields.name}</p>}
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-ink-950/40 p-4">
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-400">
+              Profile attributes
+            </p>
+            <p className="mt-1 text-xs text-slate-500">
+              All optional — pick any combination to create a test account with those attributes.
+            </p>
+
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className="label" htmlFor="plan">
+                  Plan
+                </label>
+                <select id="plan" name="plan" className="input" defaultValue="free">
+                  {PLAN_OPTIONS.map((plan) => (
+                    <option key={plan} value={plan}>
+                      {plan}
+                    </option>
+                  ))}
+                </select>
+                {fields.plan && <p className="field-error">{fields.plan}</p>}
+              </div>
+
+              <div>
+                <label className="label" htmlFor="role">
+                  Role
+                </label>
+                <select id="role" name="role" className="input" defaultValue="developer">
+                  {ROLE_OPTIONS.map((role) => (
+                    <option key={role} value={role}>
+                      {role}
+                    </option>
+                  ))}
+                </select>
+                {fields.role && <p className="field-error">{fields.role}</p>}
+              </div>
+
+              <div>
+                <label className="label" htmlFor="riskScore">
+                  Risk score
+                </label>
+                <select id="riskScore" name="riskScore" className="input" defaultValue="1">
+                  {RISK_SCORE_OPTIONS.map((score) => (
+                    <option key={score} value={score}>
+                      {score}
+                    </option>
+                  ))}
+                </select>
+                {fields.riskScore && <p className="field-error">{fields.riskScore}</p>}
+              </div>
+
+              <div>
+                <label className="label" htmlFor="active">
+                  Active
+                </label>
+                <select id="active" name="active" className="input" defaultValue="yes">
+                  <option value="yes">yes</option>
+                  <option value="no">no</option>
+                </select>
+                {fields.active && <p className="field-error">{fields.active}</p>}
+              </div>
+            </div>
+
+            <p className="mt-3 text-xs text-slate-500">
+              These travel in the signed session token. <span className="text-slate-300">active</span>{" "}
+              is an attribute like any other here — it does not block signing in.
+            </p>
+          </div>
+        </>
+      )}
 
       <button type="submit" className="btn-primary w-full" disabled={submitting}>
         {submitting

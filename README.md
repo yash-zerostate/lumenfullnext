@@ -33,6 +33,7 @@ node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"
 | `/login` | public | Signs in, sets cookies, redirects to `?next=` |
 | `/signup` | public | Creates an account and logs straight in |
 | `/dashboard` | **protected** | Projects list + create/archive, usage totals |
+| `/profile` | **protected** | All six profile attributes, shown and editable |
 
 ## API
 
@@ -44,6 +45,7 @@ node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"
 | `POST` | `/api/auth/refresh` | XHR rotation |
 | `GET`  | `/api/auth/refresh?next=…` | Navigation rotation — middleware bounces here |
 | `GET`  | `/api/auth/me` | Live user row, not just the token claims |
+| `PATCH` | `/api/auth/me` | Edit name, active, plan, role, riskScore |
 | `GET/POST` | `/api/projects` | List / create (enforces the plan's project limit) |
 | `DELETE` | `/api/projects/:id` | Soft-archive; ownership is part of the query |
 
@@ -67,4 +69,4 @@ node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"
   `/dashboard` — the refresh bounce restores the session silently.
 - Delete `lumen_refresh` too and reload — you land on `/login?reason=session_expired`.
 - Sign in as `free@example.com` and try to add a second project — the API answers
-  `402 plan_limit_reached`.
+  `402 plan_limit_reached`. Raise the plan on `/profile` and try again.

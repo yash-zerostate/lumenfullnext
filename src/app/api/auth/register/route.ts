@@ -32,7 +32,10 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  const { name, email, password, company } = parsed.data;
+  const { email, password, active, plan, role, riskScore } = parsed.data;
+  // Name is optional; fall back to the email's local part so the UI always has
+  // something to greet the user with.
+  const name = parsed.data.name || email.split("@")[0]!;
 
   await connectToDatabase();
 
@@ -46,10 +49,13 @@ export async function POST(request: NextRequest) {
   const user = await User.create({
     name,
     email,
-    company,
+    plan,
+    role,
+    riskScore,
+    // `active` is a plain profile attribute here — it is carried in the token
+    // for targeting, and deliberately does NOT gate signing in.
+    active: active === "yes",
     passwordHash: await hashPassword(password),
-    plan: "free",
-    role: "user",
     lastLoginAt: new Date(),
   });
 

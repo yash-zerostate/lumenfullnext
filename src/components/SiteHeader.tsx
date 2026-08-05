@@ -30,9 +30,17 @@ export function SiteHeader({ user }: { user: SessionUser | null }) {
               </Link>
             ))}
             {user && (
-              <Link href="/dashboard" className="text-sm text-slate-400 transition hover:text-white">
-                Dashboard
-              </Link>
+              <>
+                <Link
+                  href="/dashboard"
+                  className="text-sm text-slate-400 transition hover:text-white"
+                >
+                  Dashboard
+                </Link>
+                <Link href="/profile" className="text-sm text-slate-400 transition hover:text-white">
+                  Profile
+                </Link>
+              </>
             )}
           </nav>
         </div>
@@ -41,7 +49,8 @@ export function SiteHeader({ user }: { user: SessionUser | null }) {
           {user ? (
             <>
               <span className="hidden text-xs text-slate-400 sm:inline">
-                {user.email} · <span className="uppercase">{user.plan}</span>
+                {user.email} · <span className="uppercase">{user.plan}</span> · {user.role} · risk{" "}
+                {user.riskScore}
               </span>
               <LogoutButton />
             </>
