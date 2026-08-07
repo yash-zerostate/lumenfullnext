@@ -15,8 +15,24 @@ import {
   hashRefreshToken,
   newFamilyId,
 } from "@/lib/auth/refresh-token";
+import { createPretaContextToken } from "@/lib/preta-token";
 
-export type IssuedTokens = { accessToken: string; refreshToken: string };
+export type IssuedTokens = {
+  accessToken: string;
+  refreshToken: string;
+  /** Signed Preta context JWT — goes into a readable cookie the loader reads. */
+  pretaToken: string | null;
+};
+
+/** The attributes Preta targets on, taken straight off the user row. */
+function pretaAttributes(user: UserDoc) {
+  return {
+    plan: String(user.plan),
+    role: String(user.role),
+    active: user.active !== false,
+    risk_score: user.riskScore,
+  };
+}
 
 /** The shared user profile — identical field names across all three demo apps. */
 export type SessionUser = {
@@ -73,7 +89,11 @@ export async function issueSession(
     sid: familyId,
   });
 
-  return { accessToken, refreshToken };
+  return {
+    accessToken,
+    refreshToken,
+    pretaToken: await createPretaContextToken(pretaAttributes(user)),
+  };
 }
 
 export type RotateResult =
@@ -148,7 +168,17 @@ export async function rotateSession(
     sid: record.familyId,
   });
 
-  return { ok: true, tokens: { accessToken, refreshToken: nextToken }, user };
+  return {
+    ok: true,
+    user,
+    tokens: {
+      accessToken,
+      refreshToken: nextToken,
+      // Re-signed from the LIVE user row, so an attribute changed since login is
+      // picked up on the next refresh rather than waiting for a re-login.
+      pretaToken: await createPretaContextToken(pretaAttributes(user)),
+    },
+  };
 }
 
 /** Revoke the whole family behind this refresh token (logout). */

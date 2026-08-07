@@ -1,7 +1,10 @@
 import type { NextRequest } from "next/server";
 
+import { PRETA_COOKIE } from "@/lib/auth/cookies";
 import { getCurrentUser, getSessionClaims, toSessionUser } from "@/lib/auth/session";
 import { connectToDatabase } from "@/lib/db";
+import { env } from "@/lib/env";
+import { createPretaContextToken } from "@/lib/preta-token";
 import { assertSameOrigin, jsonError, jsonOk } from "@/lib/http";
 import { fieldErrors, profileSchema } from "@/lib/validation";
 import { User } from "@/models/User";
@@ -46,5 +49,24 @@ export async function PATCH(request: NextRequest) {
   );
   if (!user) return jsonError(401, "unauthenticated", "Not signed in.");
 
-  return jsonOk({ user: toSessionUser(user) });
+  // Re-sign the Preta cookie straight away. Without this the visitor keeps their
+  // old attributes for up to a full access-token lifetime, which makes flipping
+  // plan or role on this page look like it did nothing.
+  const response = jsonOk({ user: toSessionUser(user) });
+  const pretaToken = await createPretaContextToken({
+    plan: String(user.plan),
+    role: String(user.role),
+    active: user.active !== false,
+    risk_score: user.riskScore,
+  });
+  if (pretaToken) {
+    response.cookies.set(PRETA_COOKIE, pretaToken, {
+      httpOnly: false,
+      sameSite: "lax",
+      secure: env.isProd,
+      path: "/",
+      maxAge: env.accessTtlMinutes * 60,
+    });
+  }
+  return response;
 }

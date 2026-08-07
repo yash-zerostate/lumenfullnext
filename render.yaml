@@ -26,6 +26,10 @@ services:
         value: lumen_fullstack
       - key: AUTH_JWT_SECRET
         sync: false
+      # Signs the Preta context JWT. Missing → no token is signed, so Preta sees
+      # every visitor as anonymous and personalised elements never appear.
+      - key: PRETA_PRIVATE_KEY
+        sync: false
       - key: ACCESS_TOKEN_TTL_MIN
         value: "15"
       - key: REFRESH_TOKEN_TTL_DAYS
