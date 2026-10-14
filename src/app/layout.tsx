@@ -15,22 +15,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
-        {/* Preta loader. The signed context JWT travels in the `preta_ctx` cookie
-            (set at login, refreshed with every access token), so this layout reads
-            no cookies itself — which is what lets pages stay statically rendered. */}
-        {/* Same setup as saas_nextjs: preconnect, then config + loader as two plain tags.
-            Order matters — config must execute before the loader bundle, so no async/defer.
-            data-* attributes belong on the loader tag (read via document.currentScript). */}
-        <link rel="preconnect" href="https://loader-v1.pretasystems.com" />
-        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-        <script src="https://loader-v1.pretasystems.com/config?d=lumenfullnext.onrender.com"></script>
-        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+        {/* Preta SmartCode Start — Main loader (System-Dashboard, app.pretasystems.com/api). */}
         <script
-          src="https://loader-v1.pretasystems.com/l/pretaloader.js?d=lumenfullnext.onrender.com"
-          data-api="https://app.pretasystems.com/v1/api"
-          data-ctx-cookie="preta_ctx"
+          async
+          src="https://loader.pretasystems.com/?d=lumenfullnext.onrender.com"
+          data-api="https://app.pretasystems.com/api"
           data-debug="true"
         ></script>
+        {/* Preta SmartCode End */}
       </head>
       <body className="min-h-screen">
         {/* App-shell wrapper the loader keys off for banner layout (App Router has no #__next). */}
