@@ -23,6 +23,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           data-debug="true"
         ></script>
         {/* Preta SmartCode End */}
+        {/* Google tag (gtag.js) */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-P0LL1DLQKN"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-P0LL1DLQKN');
+`,
+          }}
+        />
       </head>
       <body className="min-h-screen">
         {/* App-shell wrapper the loader keys off for banner layout (App Router has no #__next). */}
