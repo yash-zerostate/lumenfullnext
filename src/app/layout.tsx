@@ -15,11 +15,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
-        {/* Preta SmartCode Start — Main loader (System-Dashboard, app.pretasystems.com/api). */}
+        {/* Preta SmartCode Start — Main loader (System-Dashboard = v1, served under /v1). The bare
+            /api root no longer has an origin (Cloudflare 522), so analytics must post to /v1/api. */}
         <script
           async
           src="https://loader.pretasystems.com/?d=lumenfullnext.onrender.com"
-          data-api="https://app.pretasystems.com/api"
+          data-api="https://app.pretasystems.com/v1/api"
           data-debug="true"
         ></script>
         {/* Preta SmartCode End */}
@@ -32,7 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  gtag('config', 'G-P0LL1DLQKN');
+  gtag('config', 'G-P0LL1DLQKN'); 
 `,
           }}
         />
