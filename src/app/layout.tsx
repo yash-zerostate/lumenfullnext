@@ -15,12 +15,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
-        {/* Preta SmartCode Start — Main loader (System-Dashboard = v1, served under /v1). The bare
-            /api root no longer has an origin (Cloudflare 522), so analytics must post to /v1/api. */}
+        {/* Preta SmartCode Start — V2 dashboard (served under /v2). Its loader is loader-v1, whose
+            API_URL is /v2/api. Order matters: no async/defer, config has to run before the loader. */}
+        <link rel="preconnect" href="https://loader-v1.pretasystems.com" />
+        <script src="https://loader-v1.pretasystems.com/config?d=lumenfullnext.onrender.com"></script>
         <script
-          async
-          src="https://loader.pretasystems.com/?d=lumenfullnext.onrender.com"
-          data-api="https://app.pretasystems.com/v1/api"
+          src="https://loader-v1.pretasystems.com/l/pretaloader.js?d=lumenfullnext.onrender.com"
+          data-api="https://app.pretasystems.com/v2/api"
+          data-ctx-cookie="preta_ctx"
           data-debug="true"
         ></script>
         {/* Preta SmartCode End */}

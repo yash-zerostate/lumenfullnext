@@ -1,6 +1,6 @@
 // Signs a short-lived Preta context JWT (RS256) that the loader reads from a
 // readable cookie (`data-ctx-cookie`). Preta verifies it with the matching PUBLIC
-// key registered for this domain — lumen-public.pem.
+// key registered for this domain — public.pem (on the V2 company Luminv2).
 //
 // Why a cookie and not a window variable: the token then lives OUTSIDE the HTML,
 // so a page can be cached and served identically to everyone while still
