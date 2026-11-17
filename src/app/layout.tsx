@@ -15,13 +15,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
-        {/* Preta SmartCode Start — V2 dashboard (served under /v2). Its loader is loader-v2, whose
-            API_URL is /v2/api. Order matters: no async/defer, config has to run before the loader. */}
-        <link rel="preconnect" href="https://loader-v2.pretasystems.com" />
-        <script src="https://loader-v2.pretasystems.com/config?d=lumenfullnext.onrender.com"></script>
+        {/* Preta SmartCode Start — V3 dashboard (served under /v3). Its loader is loader-v3
+            (wrangler env.v2, API_URL /v3/api). Order matters: no async/defer, config has to run
+            before the loader. Moved from V2 on 2026-11-17 (company "Preta v3 Test"). */}
+        <link rel="preconnect" href="https://loader-v3.pretasystems.com" />
+        <script src="https://loader-v3.pretasystems.com/config?d=lumenfullnext.onrender.com"></script>
         <script
-          src="https://loader-v2.pretasystems.com/l/pretaloader.js?d=lumenfullnext.onrender.com"
-          data-api="https://app.pretasystems.com/v2/api"
+          src="https://loader-v3.pretasystems.com/l/pretaloader.js?d=lumenfullnext.onrender.com"
+          data-api="https://app.pretasystems.com/v3/api"
           data-ctx-cookie="preta_ctx"
           data-debug="true"
         ></script>
